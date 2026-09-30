@@ -1,0 +1,271 @@
+# DATA-API.yaml — описание обязательных проверок API для платформы оценки.
+#
+# Поля соответствуют списку из раздела «Формат сдачи» презентации трека. Точная схема файла
+# у организаторов может отличаться: если они дадут шаблон, перенесите проверки в него — содержимое
+# (методы, пути, параметры, роли, коды, формат ответа) остаётся тем же.
+#
+# ВАЖНО для проверяющего: роль `user` входит по заголовку X-Dev-User-Id, поэтому в проверяемом
+# окружении должно быть DEV_AUTH_ENABLED=true (см. README). В боевом режиме вход идёт по
+# подписанному X-Max-Init-Data из мини-приложения MAX.
+# Проверки выполняются по порядку на чистой базе (события с номерами 1..36 из test-data/events.json).
+
+config_version: "1.0"          # версия схемы этого файла
+solution: "Афиша MAX"          # название решения
+team_id: "ЗАПОЛНИТЬ: идентификатор команды"
+
+# Единый HTTPS-адрес; пути ниже даны относительно него (включая префикс /api/v1).
+base_url: "https://ЗАПОЛНИТЬ-адрес-развернутого-API"
+openapi: "openapi.yaml"        # полное описание методов и форматов
+test_data: "test-data/events.json"
+
+# Роли проверки. Отдельных логинов и паролей нет: пользователь создаётся при первом запросе.
+roles:
+  anonymous:
+    description: "Без авторизации"
+    headers: {}
+  user:
+    description: "Обычный пользователь MAX (тестовый номер 1001)"
+    headers:
+      X-Dev-User-Id: "1001"
+
+checks:
+  - id: health
+    name: "Сервис жив, база доступна"
+    method: GET
+    path: /health
+    role: anonymous
+    request: {}
+    expect:
+      status: [200]
+      content_type: application/json
+      json:
+        type: object
+        required: [status]
+        values: {status: ok}
+
+  - id: categories
+    name: "Справочник категорий"
+    method: GET
+    path: /api/v1/categories
+    role: anonymous
+    request: {}
+    expect:
+      status: [200]
+      content_type: application/json
+      json:
+        type: array
+        non_empty: true
+        item_required: [id, slug, title, emoji]
+
+  - id: events_list
+    name: "Каталог: фильтр по категории и постраничная выдача"
+    method: GET
+    path: /api/v1/events
+    role: anonymous
+    request:
+      query: {category: concert, limit: 5, offset: 0}
+    expect:
+      status: [200]
+      content_type: application/json
+      json:
+        type: object
+        required: [items, total, limit, offset]
+        array_fields:
+          items: [id, title, starts_at, price_min, is_free, age_limit, pushkin_card, category, venue, source, data_updated_at, is_test_data]
+        non_empty: [items]
+
+  - id: event_detail
+    name: "Карточка события"
+    method: GET
+    path: /api/v1/events/{event_id}
+    role: anonymous
+    request:
+      path: {event_id: 1}
+    expect:
+      status: [200]
+      content_type: application/json
+      json:
+        type: object
+        required: [id, title, description, category, venue, starts_at, price_min, tags, status, is_favorite]
+        values: {id: 1}
+
+  - id: event_not_found
+    name: "Несуществующее событие даёт 404"
+    method: GET
+    path: /api/v1/events/{event_id}
+    role: anonymous
+    request:
+      path: {event_id: 999999}
+    expect:
+      status: [404]
+      content_type: application/json
+      json:
+        type: object
+        required: [detail]
+
+  - id: me_requires_auth
+    name: "Профиль без авторизации закрыт"
+    method: GET
+    path: /api/v1/me
+    role: anonymous
+    request: {}
+    expect:
+      status: [401]
+      content_type: application/json
+      json:
+        type: object
+        required: [detail]
+
+  - id: me
+    name: "Профиль пользователя создаётся при первом входе"
+    method: GET
+    path: /api/v1/me
+    role: user
+    request: {}
+    expect:
+      status: [200]
+      content_type: application/json
+      json:
+        type: object
+        required: [id, max_user_id, first_name, city, interests]
+        values: {max_user_id: 1001}
+
+  - id: assistant_greeting
+    name: "Ассистент: приветствие и первый вопрос"
+    method: POST
+    path: /api/v1/assistant/messages
+    role: user
+    request:
+      body: {text: "привет"}
+    expect:
+      status: [200]
+      content_type: application/json
+      json:
+        type: object
+        required: [text, quick_replies, cards]
+        array_fields:
+          quick_replies: [label, payload]
+        non_empty: [quick_replies]
+
+  - id: assistant_recommend
+    name: "Ассистент: подборка по фразе (основной сценарий)"
+    method: POST
+    path: /api/v1/assistant/messages
+    role: user
+    request:
+      body: {text: "что-нибудь спокойное и недорого на этой неделе"}
+    expect:
+      status: [200]
+      content_type: application/json
+      json:
+        type: object
+        required: [text, quick_replies, cards]
+        array_fields:
+          cards: [event, reasons, source_note]
+        non_empty: [cards]
+
+  - id: assistant_button
+    name: "Ассистент: нажатие быстрой кнопки («другие варианты»)"
+    method: POST
+    path: /api/v1/assistant/messages
+    role: user
+    request:
+      body: {payload: "d:more"}
+    expect:
+      status: [200]
+      content_type: application/json
+      json:
+        type: object
+        required: [text, quick_replies, cards]
+
+  - id: assistant_bad_request
+    name: "Запрос ассистенту без text и payload отклоняется"
+    method: POST
+    path: /api/v1/assistant/messages
+    role: user
+    request:
+      body: {}
+    expect:
+      status: [422]
+      content_type: application/json
+
+  - id: favorite_add
+    name: "Добавить в избранное"
+    method: PUT
+    path: /api/v1/me/favorites/{event_id}
+    role: user
+    request:
+      path: {event_id: 2}
+    expect:
+      status: [204]
+
+  - id: favorite_list
+    name: "Список избранного"
+    method: GET
+    path: /api/v1/me/favorites
+    role: user
+    request: {}
+    expect:
+      status: [200]
+      content_type: application/json
+      json:
+        type: array
+        non_empty: true
+        item_required: [id, title, starts_at, is_favorite]
+
+  - id: reminder_set
+    name: "Поставить напоминание за 30 минут"
+    method: POST
+    path: /api/v1/me/reminders
+    role: user
+    request:
+      body: {event_id: 2, minutes_before: 30}
+    expect:
+      status: [201]
+      content_type: application/json
+      json:
+        type: object
+        required: [event, remind_at]
+
+  - id: poll_create
+    name: "Создать голосование «куда пойдём»"
+    method: POST
+    path: /api/v1/polls
+    role: user
+    request:
+      body: {event_ids: [1, 2], title: "Куда в субботу?"}
+    expect:
+      status: [201]
+      content_type: application/json
+      json:
+        type: object
+        required: [id, title, options, total_votes, my_option_id]
+        array_fields:
+          options: [id, event, votes]
+        non_empty: [options]
+        values: {title: "Куда в субботу?", total_votes: 0}
+
+  - id: polls_list
+    name: "Мои голосования: созданное и то, где проголосовал"
+    method: GET
+    path: /api/v1/polls
+    role: user
+    request: {}
+    expect:
+      status: [200]
+      content_type: application/json
+      json:
+        type: array
+        non_empty: true
+        item_required: [id, title, created_at, total_votes, options_count, is_mine, voted, events_preview]
+
+  - id: poll_too_few_events
+    name: "В голосовании должно быть минимум два события"
+    method: POST
+    path: /api/v1/polls
+    role: user
+    request:
+      body: {event_ids: [1]}
+    expect:
+      status: [422]
+      content_type: application/json

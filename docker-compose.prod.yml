@@ -1,0 +1,34 @@
+# Надстройка для боевого сервера. Запуск:
+#   docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+#
+# Что меняется по сравнению с локальным запуском:
+#   * наружу открыт только Caddy (порты 80 и 443), он сам получает HTTPS-сертификат;
+#   * API и мини-приложение больше не публикуются на портах сервера. Это важно: Docker
+#     открывает опубликованные порты в обход ufw, и без сброса 8000 и 8080 были бы доступны всем.
+#   * нужен Docker Compose 2.24.4 или новее (ставится вместе с Docker по инструкции docs/deploy.md).
+
+services:
+  api:
+    ports: !reset []
+  web:
+    ports: !reset []
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    environment:
+      DOMAIN: ${DOMAIN:?Укажите DOMAIN в .env, например 203-0-113-10.sslip.io}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./deploy/tls:/tls:ro # готовый сертификат: fullchain.pem и privkey.pem
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - web
+
+volumes:
+  caddy_data:
+  caddy_config:

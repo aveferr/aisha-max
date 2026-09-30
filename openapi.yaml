@@ -1,0 +1,1522 @@
+openapi: 3.1.0
+info:
+  title: Афиша MAX — API
+  description: Бэкенд мини-приложения и чат-бота афиши с умным подбором событий.
+  version: 1.0.0
+paths:
+  /health:
+    get:
+      tags:
+      - service
+      summary: Health
+      operationId: health_health_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                additionalProperties:
+                  type: string
+                type: object
+                title: Response Health Health Get
+  /api/v1/cities:
+    get:
+      tags:
+      - catalog
+      summary: List Cities
+      operationId: list_cities_api_v1_cities_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/CityOut'
+                type: array
+                title: Response List Cities Api V1 Cities Get
+  /api/v1/categories:
+    get:
+      tags:
+      - catalog
+      summary: List Categories
+      operationId: list_categories_api_v1_categories_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/CategoryOut'
+                type: array
+                title: Response List Categories Api V1 Categories Get
+  /api/v1/events:
+    get:
+      tags:
+      - events
+      summary: List Events
+      operationId: list_events_api_v1_events_get
+      parameters:
+      - name: city_id
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          description: По умолчанию — город пользователя
+          title: City Id
+        description: По умолчанию — город пользователя
+      - name: category
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+          description: Слаги категорий
+          title: Category
+        description: Слаги категорий
+      - name: tag
+        in: query
+        required: false
+        schema:
+          type: array
+          items:
+            type: string
+          title: Tag
+      - name: date_from
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Date From
+      - name: date_to
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Date To
+      - name: price_max
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+            minimum: 0
+          - type: 'null'
+          title: Price Max
+      - name: free
+        in: query
+        required: false
+        schema:
+          type: boolean
+          default: false
+          title: Free
+      - name: pushkin_card
+        in: query
+        required: false
+        schema:
+          type: boolean
+          default: false
+          title: Pushkin Card
+      - name: max_age
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: integer
+            maximum: 21
+            minimum: 0
+          - type: 'null'
+          description: Возрастное ограничение не выше
+          title: Max Age
+        description: Возрастное ограничение не выше
+      - name: q
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: string
+            maxLength: 100
+          - type: 'null'
+          description: Поиск по названию и описанию
+          title: Q
+        description: Поиск по названию и описанию
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 100
+          minimum: 1
+          default: 20
+          title: Limit
+      - name: offset
+        in: query
+        required: false
+        schema:
+          type: integer
+          minimum: 0
+          default: 0
+          title: Offset
+      - name: x-max-init-data
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: window.WebApp.initData
+          title: X-Max-Init-Data
+        description: window.WebApp.initData
+      - name: x-dev-user-id
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Только при DEV_AUTH_ENABLED
+          title: X-Dev-User-Id
+        description: Только при DEV_AUTH_ENABLED
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Page_EventOut_'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/events/{event_id}:
+    get:
+      tags:
+      - events
+      summary: Get Event
+      operationId: get_event_api_v1_events__event_id__get
+      parameters:
+      - name: event_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Event Id
+      - name: x-max-init-data
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: window.WebApp.initData
+          title: X-Max-Init-Data
+        description: window.WebApp.initData
+      - name: x-dev-user-id
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Только при DEV_AUTH_ENABLED
+          title: X-Dev-User-Id
+        description: Только при DEV_AUTH_ENABLED
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EventOut'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/events/{event_id}/ticket-click:
+    post:
+      tags:
+      - events
+      summary: Ticket Click
+      description: Фиксирует переход к покупке (метрика пилота) и возвращает ссылку на первоисточник.
+      operationId: ticket_click_api_v1_events__event_id__ticket_click_post
+      parameters:
+      - name: event_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Event Id
+      - name: x-max-init-data
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: window.WebApp.initData
+          title: X-Max-Init-Data
+        description: window.WebApp.initData
+      - name: x-dev-user-id
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Только при DEV_AUTH_ENABLED
+          title: X-Dev-User-Id
+        description: Только при DEV_AUTH_ENABLED
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TicketLink'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/me:
+    get:
+      tags:
+      - me
+      summary: Get Me
+      operationId: get_me_api_v1_me_get
+      parameters:
+      - name: x-max-init-data
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: window.WebApp.initData
+          title: X-Max-Init-Data
+        description: window.WebApp.initData
+      - name: x-dev-user-id
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Только при DEV_AUTH_ENABLED
+          title: X-Dev-User-Id
+        description: Только при DEV_AUTH_ENABLED
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserOut'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    patch:
+      tags:
+      - me
+      summary: Update Me
+      operationId: update_me_api_v1_me_patch
+      parameters:
+      - name: x-max-init-data
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: window.WebApp.initData
+          title: X-Max-Init-Data
+        description: window.WebApp.initData
+      - name: x-dev-user-id
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Только при DEV_AUTH_ENABLED
+          title: X-Dev-User-Id
+        description: Только при DEV_AUTH_ENABLED
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserUpdate'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserOut'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/me/favorites:
+    get:
+      tags:
+      - me
+      summary: List Favorites
+      operationId: list_favorites_api_v1_me_favorites_get
+      parameters:
+      - name: x-max-init-data
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: window.WebApp.initData
+          title: X-Max-Init-Data
+        description: window.WebApp.initData
+      - name: x-dev-user-id
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Только при DEV_AUTH_ENABLED
+          title: X-Dev-User-Id
+        description: Только при DEV_AUTH_ENABLED
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/EventOut'
+                title: Response List Favorites Api V1 Me Favorites Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/me/favorites/{event_id}:
+    put:
+      tags:
+      - me
+      summary: Add Favorite
+      operationId: add_favorite_api_v1_me_favorites__event_id__put
+      parameters:
+      - name: event_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Event Id
+      - name: x-max-init-data
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: window.WebApp.initData
+          title: X-Max-Init-Data
+        description: window.WebApp.initData
+      - name: x-dev-user-id
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Только при DEV_AUTH_ENABLED
+          title: X-Dev-User-Id
+        description: Только при DEV_AUTH_ENABLED
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - me
+      summary: Remove Favorite
+      operationId: remove_favorite_api_v1_me_favorites__event_id__delete
+      parameters:
+      - name: event_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Event Id
+      - name: x-max-init-data
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: window.WebApp.initData
+          title: X-Max-Init-Data
+        description: window.WebApp.initData
+      - name: x-dev-user-id
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Только при DEV_AUTH_ENABLED
+          title: X-Dev-User-Id
+        description: Только при DEV_AUTH_ENABLED
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/me/reminders:
+    get:
+      tags:
+      - me
+      summary: List Reminders
+      operationId: list_reminders_api_v1_me_reminders_get
+      parameters:
+      - name: x-max-init-data
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: window.WebApp.initData
+          title: X-Max-Init-Data
+        description: window.WebApp.initData
+      - name: x-dev-user-id
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Только при DEV_AUTH_ENABLED
+          title: X-Dev-User-Id
+        description: Только при DEV_AUTH_ENABLED
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ReminderOut'
+                title: Response List Reminders Api V1 Me Reminders Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    post:
+      tags:
+      - me
+      summary: Create Reminder
+      operationId: create_reminder_api_v1_me_reminders_post
+      parameters:
+      - name: x-max-init-data
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: window.WebApp.initData
+          title: X-Max-Init-Data
+        description: window.WebApp.initData
+      - name: x-dev-user-id
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Только при DEV_AUTH_ENABLED
+          title: X-Dev-User-Id
+        description: Только при DEV_AUTH_ENABLED
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReminderCreate'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReminderOut'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/me/reminders/{event_id}:
+    delete:
+      tags:
+      - me
+      summary: Remove Reminder
+      operationId: remove_reminder_api_v1_me_reminders__event_id__delete
+      parameters:
+      - name: event_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Event Id
+      - name: x-max-init-data
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: window.WebApp.initData
+          title: X-Max-Init-Data
+        description: window.WebApp.initData
+      - name: x-dev-user-id
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Только при DEV_AUTH_ENABLED
+          title: X-Dev-User-Id
+        description: Только при DEV_AUTH_ENABLED
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/assistant/messages:
+    post:
+      tags:
+      - assistant
+      summary: Send Message
+      description: 'Один ход диалога: свободный текст или payload быстрой кнопки из предыдущего ответа.'
+      operationId: send_message_api_v1_assistant_messages_post
+      parameters:
+      - name: x-max-init-data
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: window.WebApp.initData
+          title: X-Max-Init-Data
+        description: window.WebApp.initData
+      - name: x-dev-user-id
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Только при DEV_AUTH_ENABLED
+          title: X-Dev-User-Id
+        description: Только при DEV_AUTH_ENABLED
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssistantRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssistantReplyOut'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/assistant/reset:
+    post:
+      tags:
+      - assistant
+      summary: Reset Dialog
+      description: Начать диалог заново (приветствие и первый вопрос).
+      operationId: reset_dialog_api_v1_assistant_reset_post
+      parameters:
+      - name: x-max-init-data
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: window.WebApp.initData
+          title: X-Max-Init-Data
+        description: window.WebApp.initData
+      - name: x-dev-user-id
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Только при DEV_AUTH_ENABLED
+          title: X-Dev-User-Id
+        description: Только при DEV_AUTH_ENABLED
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssistantReplyOut'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/polls:
+    post:
+      tags:
+      - polls
+      summary: Create Poll
+      description: 'Голосование «куда пойдём?»: ссылку на него можно отправить друзьям.'
+      operationId: create_poll_api_v1_polls_post
+      parameters:
+      - name: x-max-init-data
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: window.WebApp.initData
+          title: X-Max-Init-Data
+        description: window.WebApp.initData
+      - name: x-dev-user-id
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Только при DEV_AUTH_ENABLED
+          title: X-Dev-User-Id
+        description: Только при DEV_AUTH_ENABLED
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PollCreate'
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PollOut'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    get:
+      tags:
+      - polls
+      summary: My Polls
+      description: Голосования пользователя (созданные им и те, где он голосовал), новые сверху.
+      operationId: my_polls_api_v1_polls_get
+      parameters:
+      - name: x-max-init-data
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: window.WebApp.initData
+          title: X-Max-Init-Data
+        description: window.WebApp.initData
+      - name: x-dev-user-id
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Только при DEV_AUTH_ENABLED
+          title: X-Dev-User-Id
+        description: Только при DEV_AUTH_ENABLED
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PollSummaryOut'
+                title: Response My Polls Api V1 Polls Get
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/polls/{poll_id}:
+    get:
+      tags:
+      - polls
+      summary: Get Poll
+      operationId: get_poll_api_v1_polls__poll_id__get
+      parameters:
+      - name: poll_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Poll Id
+      - name: x-max-init-data
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: window.WebApp.initData
+          title: X-Max-Init-Data
+        description: window.WebApp.initData
+      - name: x-dev-user-id
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Только при DEV_AUTH_ENABLED
+          title: X-Dev-User-Id
+        description: Только при DEV_AUTH_ENABLED
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PollOut'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/polls/{poll_id}/votes:
+    post:
+      tags:
+      - polls
+      summary: Vote
+      operationId: vote_api_v1_polls__poll_id__votes_post
+      parameters:
+      - name: poll_id
+        in: path
+        required: true
+        schema:
+          type: integer
+          title: Poll Id
+      - name: x-max-init-data
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: window.WebApp.initData
+          title: X-Max-Init-Data
+        description: window.WebApp.initData
+      - name: x-dev-user-id
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          description: Только при DEV_AUTH_ENABLED
+          title: X-Dev-User-Id
+        description: Только при DEV_AUTH_ENABLED
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VoteIn'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PollOut'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /api/v1/admin/metrics:
+    get:
+      tags:
+      - admin
+      summary: Pilot Metrics
+      description: Метрики пилота. Отключены, пока не задан ADMIN_TOKEN.
+      operationId: pilot_metrics_api_v1_admin_metrics_get
+      parameters:
+      - name: days
+        in: query
+        required: false
+        schema:
+          type: integer
+          maximum: 365
+          minimum: 1
+          default: 7
+          title: Days
+      - name: x-admin-token
+        in: header
+        required: false
+        schema:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: X-Admin-Token
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PilotMetrics'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    AssistantReplyOut:
+      properties:
+        text:
+          type: string
+          title: Text
+        quick_replies:
+          items:
+            $ref: '#/components/schemas/QuickReplyOut'
+          type: array
+          title: Quick Replies
+        cards:
+          items:
+            $ref: '#/components/schemas/CardOut'
+          type: array
+          title: Cards
+      type: object
+      required:
+      - text
+      - quick_replies
+      - cards
+      title: AssistantReplyOut
+    AssistantRequest:
+      properties:
+        text:
+          anyOf:
+          - type: string
+            maxLength: 1000
+            minLength: 1
+          - type: 'null'
+          title: Text
+        payload:
+          anyOf:
+          - type: string
+            maxLength: 100
+          - type: 'null'
+          title: Payload
+      type: object
+      title: AssistantRequest
+      description: 'Реплика пользователя: либо свободный текст, либо payload нажатой быстрой кнопки.'
+    CardOut:
+      properties:
+        event:
+          $ref: '#/components/schemas/EventOut'
+        reasons:
+          items:
+            type: string
+          type: array
+          title: Reasons
+        source_note:
+          type: string
+          title: Source Note
+      type: object
+      required:
+      - event
+      - reasons
+      - source_note
+      title: CardOut
+    CategoryOut:
+      properties:
+        id:
+          type: integer
+          title: Id
+        slug:
+          type: string
+          title: Slug
+        title:
+          type: string
+          title: Title
+        emoji:
+          type: string
+          title: Emoji
+      type: object
+      required:
+      - id
+      - slug
+      - title
+      - emoji
+      title: CategoryOut
+    CityOut:
+      properties:
+        id:
+          type: integer
+          title: Id
+        name:
+          type: string
+          title: Name
+      type: object
+      required:
+      - id
+      - name
+      title: CityOut
+    EventOut:
+      properties:
+        id:
+          type: integer
+          title: Id
+        title:
+          type: string
+          title: Title
+        description:
+          type: string
+          title: Description
+        category:
+          $ref: '#/components/schemas/CategoryOut'
+        venue:
+          $ref: '#/components/schemas/VenueOut'
+        starts_at:
+          type: string
+          format: date-time
+          title: Starts At
+        ends_at:
+          anyOf:
+          - type: string
+            format: date-time
+          - type: 'null'
+          title: Ends At
+        price_min:
+          type: integer
+          title: Price Min
+        price_max:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: Price Max
+        is_free:
+          type: boolean
+          title: Is Free
+        age_limit:
+          type: integer
+          title: Age Limit
+        pushkin_card:
+          type: boolean
+          title: Pushkin Card
+        tags:
+          items:
+            type: string
+          type: array
+          title: Tags
+        image_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Image Url
+        ticket_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Ticket Url
+        source:
+          type: string
+          title: Source
+        source_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Source Url
+        status:
+          type: string
+          title: Status
+        is_test_data:
+          type: boolean
+          title: Is Test Data
+        data_updated_at:
+          type: string
+          format: date-time
+          title: Data Updated At
+        is_favorite:
+          type: boolean
+          title: Is Favorite
+          default: false
+      type: object
+      required:
+      - id
+      - title
+      - description
+      - category
+      - venue
+      - starts_at
+      - ends_at
+      - price_min
+      - price_max
+      - is_free
+      - age_limit
+      - pushkin_card
+      - tags
+      - image_url
+      - ticket_url
+      - source
+      - source_url
+      - status
+      - is_test_data
+      - data_updated_at
+      title: EventOut
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    Page_EventOut_:
+      properties:
+        items:
+          items:
+            $ref: '#/components/schemas/EventOut'
+          type: array
+          title: Items
+        total:
+          type: integer
+          title: Total
+        limit:
+          type: integer
+          title: Limit
+        offset:
+          type: integer
+          title: Offset
+      type: object
+      required:
+      - items
+      - total
+      - limit
+      - offset
+      title: Page[EventOut]
+    PilotMetrics:
+      properties:
+        period_days:
+          type: integer
+          title: Period Days
+        users_total:
+          type: integer
+          title: Users Total
+        active_users:
+          type: integer
+          title: Active Users
+        dialogs_started:
+          type: integer
+          title: Dialogs Started
+        dialogs_with_recommendation:
+          type: integer
+          title: Dialogs With Recommendation
+        completion_rate:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Completion Rate
+        median_seconds_to_first_recommendation:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Median Seconds To First Recommendation
+        events_shown:
+          type: integer
+          title: Events Shown
+        favorites_added:
+          type: integer
+          title: Favorites Added
+        reminders_set:
+          type: integer
+          title: Reminders Set
+        ticket_clicks:
+          type: integer
+          title: Ticket Clicks
+        polls_created:
+          type: integer
+          title: Polls Created
+        poll_votes:
+          type: integer
+          title: Poll Votes
+      type: object
+      required:
+      - period_days
+      - users_total
+      - active_users
+      - dialogs_started
+      - dialogs_with_recommendation
+      - completion_rate
+      - median_seconds_to_first_recommendation
+      - events_shown
+      - favorites_added
+      - reminders_set
+      - ticket_clicks
+      - polls_created
+      - poll_votes
+      title: PilotMetrics
+    PollCreate:
+      properties:
+        event_ids:
+          items:
+            type: integer
+          type: array
+          maxItems: 5
+          minItems: 2
+          title: Event Ids
+        title:
+          anyOf:
+          - type: string
+            maxLength: 200
+          - type: 'null'
+          title: Title
+      type: object
+      required:
+      - event_ids
+      title: PollCreate
+    PollOptionOut:
+      properties:
+        id:
+          type: integer
+          title: Id
+        event:
+          $ref: '#/components/schemas/EventOut'
+        votes:
+          type: integer
+          title: Votes
+      type: object
+      required:
+      - id
+      - event
+      - votes
+      title: PollOptionOut
+    PollOut:
+      properties:
+        id:
+          type: integer
+          title: Id
+        title:
+          type: string
+          title: Title
+        options:
+          items:
+            $ref: '#/components/schemas/PollOptionOut'
+          type: array
+          title: Options
+        total_votes:
+          type: integer
+          title: Total Votes
+        my_option_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: My Option Id
+      type: object
+      required:
+      - id
+      - title
+      - options
+      - total_votes
+      - my_option_id
+      title: PollOut
+    PollSummaryOut:
+      properties:
+        id:
+          type: integer
+          title: Id
+        title:
+          type: string
+          title: Title
+        created_at:
+          type: string
+          format: date-time
+          title: Created At
+        total_votes:
+          type: integer
+          title: Total Votes
+        options_count:
+          type: integer
+          title: Options Count
+        is_mine:
+          type: boolean
+          title: Is Mine
+          description: Пользователь — автор голосования
+        voted:
+          type: boolean
+          title: Voted
+          description: Пользователь уже проголосовал
+        events_preview:
+          items:
+            type: string
+          type: array
+          title: Events Preview
+      type: object
+      required:
+      - id
+      - title
+      - created_at
+      - total_votes
+      - options_count
+      - is_mine
+      - voted
+      - events_preview
+      title: PollSummaryOut
+      description: 'Голосование в списке: без вариантов, только то, что нужно, чтобы найти нужное.'
+    QuickReplyOut:
+      properties:
+        label:
+          type: string
+          title: Label
+        payload:
+          type: string
+          title: Payload
+      type: object
+      required:
+      - label
+      - payload
+      title: QuickReplyOut
+    ReminderCreate:
+      properties:
+        event_id:
+          type: integer
+          title: Event Id
+        minutes_before:
+          type: integer
+          maximum: 10080.0
+          minimum: 1.0
+          title: Minutes Before
+          default: 120
+      type: object
+      required:
+      - event_id
+      title: ReminderCreate
+    ReminderOut:
+      properties:
+        event:
+          $ref: '#/components/schemas/EventOut'
+        remind_at:
+          type: string
+          format: date-time
+          title: Remind At
+      type: object
+      required:
+      - event
+      - remind_at
+      title: ReminderOut
+    TicketLink:
+      properties:
+        ticket_url:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Ticket Url
+      type: object
+      required:
+      - ticket_url
+      title: TicketLink
+    UserOut:
+      properties:
+        id:
+          type: integer
+          title: Id
+        max_user_id:
+          type: integer
+          title: Max User Id
+        first_name:
+          type: string
+          title: First Name
+        last_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Last Name
+        username:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Username
+        city:
+          anyOf:
+          - $ref: '#/components/schemas/CityOut'
+          - type: 'null'
+        interests:
+          items:
+            $ref: '#/components/schemas/CategoryOut'
+          type: array
+          title: Interests
+      type: object
+      required:
+      - id
+      - max_user_id
+      - first_name
+      - last_name
+      - username
+      - city
+      - interests
+      title: UserOut
+    UserUpdate:
+      properties:
+        city_id:
+          anyOf:
+          - type: integer
+          - type: 'null'
+          title: City Id
+        interests:
+          anyOf:
+          - items:
+              type: string
+            type: array
+          - type: 'null'
+          title: Interests
+          description: Слаги категорий
+      type: object
+      title: UserUpdate
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError
+    VenueOut:
+      properties:
+        id:
+          type: integer
+          title: Id
+        name:
+          type: string
+          title: Name
+        address:
+          type: string
+          title: Address
+        latitude:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Latitude
+        longitude:
+          anyOf:
+          - type: number
+          - type: 'null'
+          title: Longitude
+        city:
+          $ref: '#/components/schemas/CityOut'
+      type: object
+      required:
+      - id
+      - name
+      - address
+      - latitude
+      - longitude
+      - city
+      title: VenueOut
+    VoteIn:
+      properties:
+        option_id:
+          type: integer
+          title: Option Id
+      type: object
+      required:
+      - option_id
+      title: VoteIn

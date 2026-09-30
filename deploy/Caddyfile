@@ -1,0 +1,7 @@
+# Сертификат лежит в deploy/tls (получен через certbot с DNS-проверкой, см. docs/deploy.md).
+# Автоматическая выдача через http-01 не работает, если сервер недоступен из-за рубежа.
+{$DOMAIN} {
+	tls /tls/fullchain.pem /tls/privkey.pem
+	encode gzip
+	reverse_proxy web:80
+}

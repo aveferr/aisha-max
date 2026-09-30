@@ -1,0 +1,655 @@
+{
+  "note": "Демонстрационные данные (все события вымышлены). day_offset — через сколько дней от запуска сида начинается событие; даты пересчитываются при каждом старте.",
+  "events": [
+    {
+      "id": 1,
+      "external_id": "c01",
+      "title": "Вечер джаза под открытым небом",
+      "category": "concert",
+      "venue": "Парк на набережной",
+      "day_offset": 0,
+      "time": "19:00",
+      "price_min": 0,
+      "price_max": null,
+      "age_limit": 12,
+      "pushkin_card": false,
+      "tags": [
+        "calm",
+        "outdoor",
+        "romantic"
+      ],
+      "status": "scheduled"
+    },
+    {
+      "id": 2,
+      "external_id": "c02",
+      "title": "Рок-фестиваль молодых групп",
+      "category": "concert",
+      "venue": "Арт-пространство «Завод»",
+      "day_offset": 3,
+      "time": "18:00",
+      "price_min": 500,
+      "price_max": 900,
+      "age_limit": 16,
+      "pushkin_card": true,
+      "tags": [
+        "active",
+        "company"
+      ],
+      "status": "scheduled"
+    },
+    {
+      "id": 3,
+      "external_id": "c03",
+      "title": "Камерный концерт: струнный квартет",
+      "category": "concert",
+      "venue": "Концертный зал «Городской»",
+      "day_offset": 1,
+      "time": "19:00",
+      "price_min": 400,
+      "price_max": 1200,
+      "age_limit": 6,
+      "pushkin_card": true,
+      "tags": [
+        "calm",
+        "romantic"
+      ],
+      "status": "scheduled"
+    },
+    {
+      "id": 4,
+      "external_id": "c04",
+      "title": "Электронная музыка: live-сет",
+      "category": "concert",
+      "venue": "Арт-пространство «Завод»",
+      "day_offset": 2,
+      "time": "21:00",
+      "price_min": 700,
+      "price_max": 1500,
+      "age_limit": 18,
+      "pushkin_card": false,
+      "tags": [
+        "active",
+        "unusual",
+        "company"
+      ],
+      "status": "scheduled"
+    },
+    {
+      "id": 5,
+      "external_id": "c05",
+      "title": "Оркестр молодых дирижёров",
+      "category": "concert",
+      "venue": "Концертный зал «Городской»",
+      "day_offset": 5,
+      "time": "18:00",
+      "price_min": 300,
+      "price_max": 800,
+      "age_limit": 6,
+      "pushkin_card": true,
+      "tags": [
+        "calm",
+        "educational"
+      ],
+      "status": "scheduled"
+    },
+    {
+      "id": 6,
+      "external_id": "c06",
+      "title": "Акустический вечер и открытый микрофон",
+      "category": "concert",
+      "venue": "Клуб «Подвал»",
+      "day_offset": 1,
+      "time": "20:00",
+      "price_min": 0,
+      "price_max": null,
+      "age_limit": 16,
+      "pushkin_card": false,
+      "tags": [
+        "calm",
+        "company"
+      ],
+      "status": "scheduled"
+    },
+    {
+      "id": 7,
+      "external_id": "c07",
+      "title": "Гала-концерт (перенесён)",
+      "category": "concert",
+      "venue": "Концертный зал «Городской»",
+      "day_offset": 2,
+      "time": "19:00",
+      "price_min": 800,
+      "price_max": 2000,
+      "age_limit": 12,
+      "pushkin_card": true,
+      "tags": [
+        "calm"
+      ],
+      "status": "cancelled"
+    },
+    {
+      "id": 8,
+      "external_id": "t01",
+      "title": "Современная драма «Пауза»",
+      "category": "theatre",
+      "venue": "Драматический театр, малая сцена",
+      "day_offset": 1,
+      "time": "19:00",
+      "price_min": 600,
+      "price_max": 1500,
+      "age_limit": 16,
+      "pushkin_card": true,
+      "tags": [
+        "calm",
+        "unusual"
+      ],
+      "status": "scheduled"
+    },
+    {
+      "id": 9,
+      "external_id": "t02",
+      "title": "Мюзикл для всей семьи",
+      "category": "theatre",
+      "venue": "Концертный зал «Городской»",
+      "day_offset": 4,
+      "time": "15:00",
+      "price_min": 500,
+      "price_max": 1800,
+      "age_limit": 6,
+      "pushkin_card": true,
+      "tags": [
+        "family",
+        "active"
+      ],
+      "status": "scheduled"
+    },
+    {
+      "id": 10,
+      "external_id": "t03",
+      "title": "Иммерсивный спектакль в лофте",
+      "category": "theatre",
+      "venue": "Арт-пространство «Завод»",
+      "day_offset": 6,
+      "time": "20:00",
+      "price_min": 1200,
+      "price_max": 2000,
+      "age_limit": 16,
+      "pushkin_card": false,
+      "tags": [
+        "unusual",
+        "romantic"
+      ],
+      "status": "scheduled"
+    },
+    {
+      "id": 11,
+      "external_id": "t04",
+      "title": "Классическая комедия положений",
+      "category": "theatre",
+      "venue": "Драматический театр, малая сцена",
+      "day_offset": 2,
+      "time": "18:30",
+      "price_min": 400,
+      "price_max": 1000,
+      "age_limit": 12,
+      "pushkin_card": true,
+      "tags": [
+        "company"
+      ],
+      "status": "scheduled"
+    },
+    {
+      "id": 12,
+      "external_id": "e01",
+      "title": "Выставка «Город и время»",
+      "category": "exhibition",
+      "venue": "Музей современного искусства",
+      "day_offset": 1,
+      "time": "11:00",
+      "price_min": 200,
+      "price_max": 300,
+      "age_limit": 6,
+      "pushkin_card": true,
+      "tags": [
+        "calm",
+        "educational"
+      ],
+      "status": "scheduled"
+    },
+    {
+      "id": 13,
+      "external_id": "e02",
+      "title": "Фотовыставка молодых авторов",
+      "category": "exhibition",
+      "venue": "Арт-пространство «Завод»",
+      "day_offset": 1,
+      "time": "12:00",
+      "price_min": 0,
+      "price_max": null,
+      "age_limit": 0,
+      "pushkin_card": false,
+      "tags": [
+        "calm",
+        "unusual"
+      ],
+      "status": "scheduled"
+    },
+    {
+      "id": 14,
+      "external_id": "e03",
+      "title": "Интерактивный музей науки",
+      "category": "exhibition",
+      "venue": "Музей современного искусства",
+      "day_offset": 3,
+      "time": "11:00",
+      "price_min": 350,
+      "price_max": 500,
+      "age_limit": 0,
+      "pushkin_card": true,
+      "tags": [
+        "educational",
+        "family"
+      ],
+      "status": "scheduled"
+    },
+    {
+      "id": 15,
+      "external_id": "e04",
+      "title": "Ночь музеев: вечерняя экскурсия",
+      "category": "exhibition",
+      "venue": "Музей современного искусства",
+      "day_offset": 5,
+      "time": "19:00",
+      "price_min": 0,
+      "price_max": null,
+      "age_limit": 6,
+      "pushkin_card": false,
+      "tags": [
+        "unusual",
+        "calm",
+        "romantic"
+      ],
+      "status": "scheduled"
+    },
+    {
+      "id": 16,
+      "external_id": "s01",
+      "title": "Стендап-вечер: новые лица",
+      "category": "standup",
+      "venue": "Клуб «Подвал»",
+      "day_offset": 1,
+      "time": "20:00",
+      "price_min": 500,
+      "price_max": 800,
+      "age_limit": 18,
+      "pushkin_card": false,
+      "tags": [
+        "company",
+        "active"
+      ],
+      "status": "scheduled"
+    },
+    {
+      "id": 17,
+      "external_id": "s02",
+      "title": "Открытый микрофон для начинающих",
+      "category": "standup",
+      "venue": "Клуб «Подвал»",
+      "day_offset": 3,
+      "time": "19:30",
+      "price_min": 0,
+      "price_max": null,
+      "age_limit": 16,
+      "pushkin_card": false,
+      "tags": [
+        "company"
+      ],
+      "status": "scheduled"
+    },
+    {
+      "id": 18,
+      "external_id": "s03",
+      "title": "Стендап-шоу в лофте",
+      "category": "standup",
+      "venue": "Арт-пространство «Завод»",
+      "day_offset": 4,
+      "time": "21:00",
+      "price_min": 900,
+      "price_max": 1500,
+      "age_limit": 18,
+      "pushkin_card": false,
+      "tags": [
+        "company",
+        "unusual"
+      ],
+      "status": "scheduled"
+    },
+    {
+      "id": 19,
+      "external_id": "k01",
+      "title": "Кукольный спектакль «Сказка»",
+      "category": "kids",
+      "venue": "Драматический театр, малая сцена",
+      "day_offset": 2,
+      "time": "11:00",
+      "price_min": 300,
+      "price_max": 500,
+      "age_limit": 0,
+      "pushkin_card": true,
+      "tags": [
+        "family",
+        "calm"
+      ],
+      "status": "scheduled"
+    },
+    {
+      "id": 20,
+      "external_id": "k02",
+      "title": "Мастер-класс по лепке для детей",
+      "category": "kids",
+      "venue": "Молодёжный центр «Точка»",
+      "day_offset": 3,
+      "time": "12:00",
+      "price_min": 200,
+      "price_max": null,
+      "age_limit": 6,
+      "pushkin_card": false,
+      "tags": [
+        "family"
+      ],
+      "status": "scheduled"
+    },
+    {
+      "id": 21,
+      "external_id": "k03",
+      "title": "Детский научный квест",
+      "category": "kids",
+      "venue": "Музей современного искусства",
+      "day_offset": 5,
+      "time": "14:00",
+      "price_min": 400,
+      "price_max": null,
+      "age_limit": 6,
+      "pushkin_card": true,
+      "tags": [
+        "family",
+        "active",
+        "educational"
+      ],
+      "status": "scheduled"
+    },
+    {
+      "id": 22,
+      "external_id": "p01",
+      "title": "Открытая тренировка по йоге в парке",
+      "category": "sport",
+      "venue": "Парк на набережной",
+      "day_offset": 1,
+      "time": "08:30",
+      "price_min": 0,
+      "price_max": null,
+      "age_limit": 0,
+      "pushkin_card": false,
+      "tags": [
+        "calm",
+        "outdoor"
+      ],
+      "status": "scheduled"
+    },
+    {
+      "id": 23,
+      "external_id": "p02",
+      "title": "Осенний забег на 5 и 10 км",
+      "category": "sport",
+      "venue": "Парк на набережной",
+      "day_offset": 5,
+      "time": "10:00",
+      "price_min": 300,
+      "price_max": null,
+      "age_limit": 16,
+      "pushkin_card": false,
+      "tags": [
+        "active",
+        "outdoor"
+      ],
+      "status": "scheduled"
+    },
+    {
+      "id": 24,
+      "external_id": "p03",
+      "title": "Матч студенческой лиги по баскетболу",
+      "category": "sport",
+      "venue": "Спорткомплекс «Олимп»",
+      "day_offset": 2,
+      "time": "18:00",
+      "price_min": 100,
+      "price_max": 200,
+      "age_limit": 0,
+      "pushkin_card": false,
+      "tags": [
+        "active",
+        "company"
+      ],
+      "status": "scheduled"
+    },
+    {
+      "id": 25,
+      "external_id": "p04",
+      "title": "Скалодром для новичков",
+      "category": "sport",
+      "venue": "Спорткомплекс «Олимп»",
+      "day_offset": 4,
+      "time": "19:00",
+      "price_min": 300,
+      "price_max": 500,
+      "age_limit": 12,
+      "pushkin_card": false,
+      "tags": [
+        "active",
+        "company"
+      ],
+      "status": "scheduled"
+    },
+    {
+      "id": 26,
+      "external_id": "l01",
+      "title": "Лекция «Как работает мозг»",
+      "category": "lecture",
+      "venue": "Городская библиотека",
+      "day_offset": 1,
+      "time": "18:30",
+      "price_min": 0,
+      "price_max": null,
+      "age_limit": 12,
+      "pushkin_card": false,
+      "tags": [
+        "educational",
+        "calm"
+      ],
+      "status": "scheduled"
+    },
+    {
+      "id": 27,
+      "external_id": "l02",
+      "title": "Мастер-класс по акварели",
+      "category": "lecture",
+      "venue": "Молодёжный центр «Точка»",
+      "day_offset": 2,
+      "time": "18:00",
+      "price_min": 500,
+      "price_max": null,
+      "age_limit": 12,
+      "pushkin_card": false,
+      "tags": [
+        "calm",
+        "unusual",
+        "romantic"
+      ],
+      "status": "scheduled"
+    },
+    {
+      "id": 28,
+      "external_id": "l03",
+      "title": "Воркшоп по финансовой грамотности",
+      "category": "lecture",
+      "venue": "Молодёжный центр «Точка»",
+      "day_offset": 4,
+      "time": "17:00",
+      "price_min": 0,
+      "price_max": null,
+      "age_limit": 16,
+      "pushkin_card": false,
+      "tags": [
+        "educational"
+      ],
+      "status": "scheduled"
+    },
+    {
+      "id": 29,
+      "external_id": "l04",
+      "title": "Публичная лекция об истории города",
+      "category": "lecture",
+      "venue": "Городская библиотека",
+      "day_offset": 6,
+      "time": "16:00",
+      "price_min": 0,
+      "price_max": null,
+      "age_limit": 6,
+      "pushkin_card": false,
+      "tags": [
+        "educational",
+        "calm"
+      ],
+      "status": "scheduled"
+    },
+    {
+      "id": 30,
+      "external_id": "g01",
+      "title": "Осенняя ярмарка на набережной",
+      "category": "city",
+      "venue": "Парк на набережной",
+      "day_offset": 2,
+      "time": "12:00",
+      "price_min": 0,
+      "price_max": null,
+      "age_limit": 0,
+      "pushkin_card": false,
+      "tags": [
+        "family",
+        "outdoor",
+        "company"
+      ],
+      "status": "scheduled"
+    },
+    {
+      "id": 31,
+      "external_id": "g02",
+      "title": "Фестиваль уличной еды",
+      "category": "city",
+      "venue": "Парк на набережной",
+      "day_offset": 5,
+      "time": "13:00",
+      "price_min": 0,
+      "price_max": null,
+      "age_limit": 0,
+      "pushkin_card": false,
+      "tags": [
+        "company",
+        "outdoor",
+        "active"
+      ],
+      "status": "scheduled"
+    },
+    {
+      "id": 32,
+      "external_id": "g03",
+      "title": "Пешеходная экскурсия по старому городу",
+      "category": "city",
+      "venue": "Парк на набережной",
+      "day_offset": 3,
+      "time": "11:00",
+      "price_min": 300,
+      "price_max": 400,
+      "age_limit": 6,
+      "pushkin_card": false,
+      "tags": [
+        "educational",
+        "outdoor",
+        "calm"
+      ],
+      "status": "scheduled"
+    },
+    {
+      "id": 33,
+      "external_id": "g04",
+      "title": "Вечерний квиз для студентов",
+      "category": "city",
+      "venue": "Молодёжный центр «Точка»",
+      "day_offset": 1,
+      "time": "19:00",
+      "price_min": 100,
+      "price_max": 200,
+      "age_limit": 16,
+      "pushkin_card": false,
+      "tags": [
+        "company",
+        "active"
+      ],
+      "status": "scheduled"
+    },
+    {
+      "id": 34,
+      "external_id": "v01",
+      "title": "Экологический субботник в парке",
+      "category": "volunteering",
+      "venue": "Парк на набережной",
+      "day_offset": 4,
+      "time": "11:00",
+      "price_min": 0,
+      "price_max": null,
+      "age_limit": 0,
+      "pushkin_card": false,
+      "tags": [
+        "outdoor",
+        "company"
+      ],
+      "status": "scheduled"
+    },
+    {
+      "id": 35,
+      "external_id": "v02",
+      "title": "Помощь приюту для животных",
+      "category": "volunteering",
+      "venue": "Молодёжный центр «Точка»",
+      "day_offset": 6,
+      "time": "12:00",
+      "price_min": 0,
+      "price_max": null,
+      "age_limit": 12,
+      "pushkin_card": false,
+      "tags": [
+        "calm"
+      ],
+      "status": "scheduled"
+    },
+    {
+      "id": 36,
+      "external_id": "v03",
+      "title": "Волонтёр на студенческом фестивале",
+      "category": "volunteering",
+      "venue": "Молодёжный центр «Точка»",
+      "day_offset": 7,
+      "time": "10:00",
+      "price_min": 0,
+      "price_max": null,
+      "age_limit": 16,
+      "pushkin_card": false,
+      "tags": [
+        "active",
+        "company"
+      ],
+      "status": "scheduled"
+    }
+  ]
+}

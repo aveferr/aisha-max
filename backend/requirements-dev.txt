@@ -1,0 +1,8 @@
+-r requirements.txt
+pytest==9.1.1
+pytest-asyncio==1.4.0
+ruff==0.16.9
+# Встроенный PostgreSQL для интеграционных тестов без Docker (опционально:
+# при заданной TEST_DATABASE_URL тесты идут в вашу БД).
+pgserver==0.1.4
+PyYAML==6.0.3
